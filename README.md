@@ -1,2 +1,1 @@
-# Fruit-Catcher
-A multiplayer version of the classic fruit catcher game
+# C39-Debug-Part-1
