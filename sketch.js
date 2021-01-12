@@ -2,11 +2,14 @@ var database;
 var back_img;
 var gameState =0;
 var playerCount = 0;
-var allPlayers;
+var allPlayers, allGames;
 
 var fruitapalooza = [];
 
-var playerscorecount;
+var playerscorecount, gamemanager;
+
+var gameCount;
+var indexofgame = -1;
 
 var player, form,game;
 var player1,player2;
@@ -30,17 +33,19 @@ function preload(){
 function setup() {
   createCanvas(1000, 600);
   database = firebase.database();
-  game = new Game();
-  game.getState();
-  game.start();
-  
+  gamemanager = new GameManager();
+  gamemanager.start();
 }
 
 function draw() {
   background(back_img);
   
+  if (game) {
+    game.update();
+  }
+
    if (playerCount === 2) {
-     game.update(1);
+     game.update();
    }
    if (gameState === 1) {
      clear(); 

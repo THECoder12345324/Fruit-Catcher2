@@ -1,41 +1,78 @@
 var index2, index3;
 
+var allCharacters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 
+'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 
+'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', 
+'7', '8', '9', '0', '!', '@', '#', '$', '%', '^', '&', '*']
+
 class Game{
     constructor(){
-
+        this.state = 0
+        this.index = indexofgame;
+        this.playerCount = 0;
+        this.code = "";
     }
     getState() {
-        var gameStateRef = database.ref('gameState');
+        var gameStateRef = database.ref('games/game' + this.index + '/gameState');
         gameStateRef.on("value", function (data) {
             gameState = data.val();
         })
 
     }
 
-    update(state) {
+    /*update(state) {
         database.ref('/').update({
             gameState: state
         });
+    }*/
+    update() {
+        var gameIndex = "games/game" + this.index;
+        database.ref(gameIndex).set({
+            gameState: this.state,
+            playerCount: this.playerCount,
+            code: this.code
+        })
+    }
+    generateCode() {
+        var a1 = random(allCharacters);
+        var b1 = random(allCharacters);
+        var c1 = random(allCharacters);
+        var d1 = random(allCharacters);
+        var e1 = random(allCharacters);
+        var f1 = random(allCharacters);
+        var g1 = random(allCharacters);
+        var h1 = random(allCharacters);
+
+        this.code = a1 + b1 + c1 + d1 + e1 + f1 + g1 + h1;
+    }
+    updateCode() {
+        database.ref('games/game' + this.index).update({
+            code: this.code
+        })
     }
     async start() {
-            if (gameState === 0) {
-                player = new Player();
-                var playerCountRef = await database.ref('playerCount').once("value");
-                if (playerCountRef.exists()) {
-                    playerCount = playerCountRef.val();
-                    player.getCount();
-                }
-                form = new Form()
-                form.display();
+        if (gameState === 0) {
+            player = new Player();
+            //for(var gme in allGames) {
+              //  if (allGames[gme].index == this.index) {
+            var playerCountRef = await database.ref('games/game' + this.index + '/playerCount').once("value");
+            if (playerCountRef.exists()) {
+                playerCount = playerCountRef.val();
+                player.getCount();
             }
-    player1 = createSprite(200,500);
-    player1.addImage("player1",player_img);
-    
-    player2 = createSprite(800,500);
-    player2.addImage("player2", player_img);
-    players=[player1,player2];
-
+                //}
+       //     }
+            form = new Form()
+            form.display();
         }
+        player1 = createSprite(200,500);
+        player1.addImage("player1",player_img);
+        
+        player2 = createSprite(800,500);
+        player2.addImage("player2", player_img);
+        players=[player1,player2];
+
+    }
     
     play(){
         
@@ -132,8 +169,13 @@ class Game{
             }
         }
     }
-
     end(){
        console.log("Game Ended");
+    }
+    static getGameInfo() {
+        var gameInfoRef = database.ref('games');
+        gameInfoRef.on("value", (data) => {
+            allGames = data.val();
+        })
     }
 }
